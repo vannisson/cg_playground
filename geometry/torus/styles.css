@@ -1,0 +1,8 @@
+/* Basic styling for the body and canvas elements */
+body {
+  margin: 0;
+}
+
+canvas {
+  display: block;
+}
