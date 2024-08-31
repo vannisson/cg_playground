@@ -19,31 +19,54 @@
     </script>
     <script type="module" src="planet.js"></script>
   </head>
-  <body class="h-screen flex justify-center items-center text-center text-white bg-black font-mono">
-    <div>
-      <h1 class="text-3xl mb-4">Hello There!!👋</h1>
-      <h2 class="text-xl mb-8">Welcome to Geo's Computer Graphics Playground</h2>
+  <body
+    class="min-h-screen flex flex-col justify-center items-center text-center text-white bg-black font-mono"
+  >
+    <div class="w-full px-4 max-w-4xl">
+      <h1 class="text-3xl sm:text-2xl mb-4">Hello There!!👋</h1>
+      <h2 class="text-xl sm:text-xl mb-8">
+        Welcome to Geo's Computer Graphics Playground
+      </h2>
 
-      <div id="canvas" class="p-2 w-96 h-72 mx-auto my-8">
-      </div>
+      <div id="canvas" class="w-full h-64 sm:h-80 mx-auto my-8"></div>
 
-      <div class="flex justify-center gap-8 mb-8">
+      <div class="flex flex-wrap justify-center gap-4 mb-8">
         <a href="./geometry/index.html">
-          <button type="button" class="border rounded-lg px-5 py-2.5">🧊 Geometry</button>
+          <button type="button" class="border rounded-lg px-5 py-2.5">
+            🧊 Geometry
+          </button>
         </a>
-        <a >
-          <button type="button" class="border cursor-not-allowed rounded-lg px-5 py-2.5">🌀 Spring Mass</button>
+        <a>
+          <button
+            type="button"
+            class="border cursor-not-allowed rounded-lg px-5 py-2.5"
+          >
+            🌀 Spring Mass
+          </button>
         </a>
-        <a >
-          <button type="button" class="border cursor-not-allowed rounded-lg px-5 py-2.5">🔥 Fire Simulation</button>
+        <a>
+          <button
+            type="button"
+            class="border cursor-not-allowed rounded-lg px-5 py-2.5"
+          >
+            🔥 Fire Simulation
+          </button>
         </a>
       </div>
-      
-      <div class="flex justify-center gap-2">
+
+      <div class="flex justify-center gap-2 items-center">
         <h2 class="text-base">Geovane Filho</h2>
         <h2 class="text-base">-</h2>
-        <a class="flex justify-center items-center gap-1" href="https://github.com/vannisson/cg_playground">
-          <img draggable="false" src= "./img/github_out.svg" width="25" alt="My Happy SVG"/>
+        <a
+          class="flex justify-center items-center gap-1"
+          href="https://github.com/vannisson/cg_playground"
+        >
+          <img
+            draggable="false"
+            src="./img/github_out.svg"
+            width="25"
+            alt="My Happy SVG"
+          />
           <h2 class="text-base">Github</h2>
         </a>
       </div>

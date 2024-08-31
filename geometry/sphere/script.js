@@ -1,83 +1,117 @@
-// Initialize the scene, camera, and renderer
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(
-    75, // Field of view
-    window.innerWidth / window.innerHeight, // Aspect ratio
-    0.1, // Near clipping plane
-    1000 // Far clipping plane
-);
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('sphereCanvas') });
-renderer.setSize(window.innerWidth, window.innerHeight); // Set the renderer size to fill the window
+// Get the canvas element from the DOM
+const container = document.getElementById("sphereCanvas");
 
-// Add orbit controls to enable user interaction with the camera
+// Create a new Three.js scene
+const scene = new THREE.Scene();
+
+// Set up a perspective camera
+const camera = new THREE.PerspectiveCamera(
+  75,
+  container.clientWidth / container.clientHeight,
+  0.1,
+  1000
+);
+
+// Create a WebGL renderer and attach it to the canvas
+const renderer = new THREE.WebGLRenderer({ canvas: container });
+renderer.setSize(container.clientWidth - 16, container.clientHeight - 16);
+
+// Add OrbitControls to allow interactive rotation and zoom
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
-// Step 1: Define Sphere Parameters
-const radius = 5; // Radius of the sphere
-const widthSegments = 20; // Horizontal segments
-const heightSegments = 20; // Vertical segments
+// Get the checkbox element from the DOM
+const wireframeCheckbox = document.getElementById("checked-checkbox");
 
-const vertices = [];
-const indices = [];
+// Variable to hold the sphere mesh
+let sphere = null;
 
-// Step 2: Calculate Vertices
-for (let y = 0; y <= heightSegments; y++) {
-    const phi = (y / heightSegments) * Math.PI; // Calculate vertical angle
-    for (let x = 0; x <= widthSegments; x++) {
-        const theta = (x / widthSegments) * 2 * Math.PI; // Calculate horizontal angle
-        const vx = radius * Math.sin(phi) * Math.cos(theta); // X coordinate
-        const vy = radius * Math.sin(phi) * Math.sin(theta); // Y coordinate
-        const vz = radius * Math.cos(phi); // Z coordinate
-        vertices.push(vx, vy, vz); // Add vertex to the list
-    }
+/**
+ * Creates a sphere geometry based on the provided parameters,
+ * and adds it to the scene. If a sphere already exists, it is removed first.
+ *
+ * @param {number} radius - The radius of the sphere.
+ * @param {number} widthSegments - The number of horizontal segments.
+ * @param {number} heightSegments - The number of vertical segments.
+ * @param {boolean} wireframe - Defines if the object will display the wireframe.
+ */
+function createSphere(radius, widthSegments, heightSegments, wireframe = true) {
+  // Remove and dispose of the existing sphere if it exists
+  if (sphere) {
+    scene.remove(sphere);
+    sphere.geometry.dispose();
+    sphere.material.dispose();
+    sphere = null;
+  }
+
+  // Create sphere geometry
+  const geometry = new THREE.SphereGeometry(
+    radius,
+    widthSegments,
+    heightSegments
+  );
+
+  // Create a mesh with the geometry and a basic material
+  const material = new THREE.MeshBasicMaterial({
+    color: 0x0000ff,
+    wireframe: wireframe,
+  });
+  sphere = new THREE.Mesh(geometry, material);
+  scene.add(sphere);
 }
 
-// Step 3: Create Faces
-for (let y = 0; y < heightSegments; y++) {
-    for (let x = 0; x < widthSegments; x++) {
-        const base = y * (widthSegments + 1) + x;
-        const a = base;
-        const b = base + widthSegments + 1;
-        const c = base + 1;
-        const d = base + widthSegments + 2;
+// Initialize the sphere with default parameters
+createSphere(5, 20, 20);
 
-        // First Triangle
-        indices.push(a, b, c);
-        // Second Triangle
-        indices.push(c, b, d);
-    }
-}
-
-// Step 4: Create Geometry and Material
-const geometry = new THREE.BufferGeometry();
-geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); // Set vertices to geometry
-geometry.setIndex(indices); // Set indices for the geometry
-
-const material = new THREE.MeshBasicMaterial({
-    color: 0x0000ff, // Blue color
-    wireframe: true // Display as a wireframe
-});
-const sphere = new THREE.Mesh(geometry, material);
-
-// Add the Sphere to the Scene
-scene.add(sphere);
-
-// Set the initial position of the camera
+// Set the initial camera position
 camera.position.set(0, 5, 20);
 
-// Animation function to be called on each frame
+/**
+ * Animation loop to render the scene and update controls.
+ */
 function animate() {
-    requestAnimationFrame(animate); // Request the next frame
-
-    controls.update(); // Update orbit controls
-    renderer.render(scene, camera); // Render the scene from the camera's perspective
+  requestAnimationFrame(animate);
+  controls.update();
+  renderer.render(scene, camera);
 }
 
-animate(); // Start the animation loop
+// Start the animation loop
+animate();
 
-// Handle window resize events for responsiveness
-window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight; // Update camera aspect ratio
-    camera.updateProjectionMatrix(); // Apply the aspect ratio changes
-    renderer.setSize(window.innerWidth, window.innerHeight); // Resize the renderer
+/**
+ * Event listener to handle window resizing. Adjusts the camera's aspect ratio
+ * and updates the renderer's size to match the new dimensions of the container.
+ */
+window.addEventListener("resize", () => {
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+
+  // Update the camera's aspect ratio and projection matrix
+  camera.aspect = width / height;
+  camera.updateProjectionMatrix();
+
+  // Resize the renderer to match the container size
+  renderer.setSize(width - 16, height - 16);
 });
+
+// Get radius, width segments, and height segments input elements from the DOM
+const radiusInput = document.getElementById("radius-input");
+const widthSegmentsInput = document.getElementById("width-segments-input");
+const heightSegmentsInput = document.getElementById("height-segments-input");
+
+/**
+ * Updates the sphere based on the current values of the input elements and the wireframe checkbox.
+ */
+function updateSphere() {
+  const radius = parseFloat(radiusInput.value);
+  const widthSegments = parseInt(widthSegmentsInput.value);
+  const heightSegments = parseInt(heightSegmentsInput.value);
+  const wireframe = wireframeCheckbox.checked;
+
+  createSphere(radius, widthSegments, heightSegments, wireframe);
+}
+
+// Add event listeners to update the sphere when the inputs change
+radiusInput.addEventListener("input", updateSphere);
+widthSegmentsInput.addEventListener("input", updateSphere);
+heightSegmentsInput.addEventListener("input", updateSphere);
+wireframeCheckbox.addEventListener("change", updateSphere);
