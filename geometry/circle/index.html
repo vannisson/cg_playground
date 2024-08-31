@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Círculo</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script>
+        // Cena, câmera e renderizador
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Controles de órbita
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
+        // Passo 1: Definindo parâmetros
+        const radius = 5;
+        const segments = 30;
+        const points = [new THREE.Vector3(0, 0, 0)];
+
+        // Passo2: Distribuição uniforme dos Pontos do Círculo
+        for (let i = 0; i <= segments; i++) {
+          const theta = (i / segments) * (2 * Math.PI);
+          const x = radius * Math.cos(theta);
+          const y = radius * Math.sin(theta);
+          points.push(new THREE.Vector3(x, y, 0));
+        }
+
+        // Passo 3: Criando a Geometria e Material
+        const geometry = new THREE.BufferGeometry().setFromPoints(points);
+
+        // Passo 4: Converte os pontos para um array de vértices
+        const vertices = [];
+        for (let i = 0; i < points.length; i++) {
+            vertices.push(points[i].x, points[i].y, points[i].z);
+        }
+
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+
+        // Passo 5: Criando os índices dos triângulos
+        const indices = [];
+        for (let i = 1; i < segments; i++) {
+            indices.push(0, i, i + 1);
+        }
+        indices.push(0, segments, 1);
+
+        geometry.setIndex(indices);
+
+        // const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+        // const circle = new THREE.Line(geometry, material);
+        const material = new THREE.MeshBasicMaterial({ color: 0x0000ff, side: THREE.DoubleSide, wireframe: true });
+        const circle = new THREE.Mesh(geometry, material);
+
+        // Adicionando o círculo à cena
+        scene.add(circle);
+
+        // Configurar a posição da câmera
+        camera.position.z = 20;
+        camera.position.y = 5;
+
+        // Função de animação
+        const animate = function () {
+            requestAnimationFrame(animate);
+
+            controls.update();
+            renderer.render(scene, camera);
+        };
+
+        animate();
+
+        // Responsividade
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
