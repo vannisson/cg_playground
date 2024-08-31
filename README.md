@@ -1,9 +1,6 @@
-# 🛝 Computer Graphics Playground
-
-<img align="left" width="250" height="150" src="./img/planet.gif">
+# 🪐 Computer Graphics Playground
 
 This repository is where I store experimental codes while I learn about Computer Graphics. It includes everything from shader test codes to building geometric shapes using ThreeJS. Feel free to explore all the cool stuff I've been working on.
-<br> <br> <br>
 
 ## 📖 Current content
 
